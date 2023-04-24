@@ -1,29 +1,66 @@
 ---
-title: "Use Case"
+title: "Use Case of Almond Yield"
 output: html_document
 date: "`r Sys.Date()`"
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include = FALSE}
+library(tidyverse)
+source("src/almond-yield.R", local = knitr::knit_global())
 ```
 
-## R Markdown
+## Conceptual Modeling
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+![](almond_yield.jpg)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Application
 
-```{r cars}
-summary(cars)
+Let's start by loading and tidying the data:
+
+```{r}
+# define column names
+col_names <- c("day", "month", "year", "wy", "tmax_c", "tmin_c", "precip")
+
+# load data frame with column names
+clim <- read.table("src/clim.txt", header = TRUE, col.names = col_names)
+
+# start data wrangling
+clim_dat <- clim %>%
+  # convert to numeric type 
+  mutate(tmin_c = as.numeric(tmin_c),
+         precip = as.numeric(precip)) %>% 
+  # filter to relevant months of observation
+  filter(month == c(1, 2)) 
+
+# create temperature data frame 
+temp_dat <- clim_dat %>%
+  # filter to relevant month 
+  filter(month == 2) %>%
+  # group daily observations by year
+  group_by(year) %>%
+  # summarize for mean and minimum values  
+  summarize(mean_tmin_feb = mean(tmin_c), 
+            min_tmin_feb = min(tmin_c))
+
+# create precipitation data frame 
+precip_dat <- clim_dat %>% 
+  # filter to relevant month 
+  filter(month == 1) %>% 
+  # group daily observations by year
+  group_by(year) %>%
+  # summarize for sum value
+  summarize(sum_precip_jan = sum(precip))
+
+# create final data frame 
+dat <- left_join(temp_dat, precip_dat, by = "year")
 ```
 
-## Including Plots
+And let's apply the function:
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+almond_yield(temp_feb = dat$mean_tmin_feb, precip_jan = dat$sum_precip_jan)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+almond_yield(temp_feb = dat$min_tmin_feb, precip_jan = dat$sum_precip_jan)
+```
