@@ -76,6 +76,11 @@ temp_feb <- rnorm(mean = mean(dat$mean_tmin_feb), sd = 0.1, n = 20)
 # use map() to apply function to the 20 samples 
 almond_yield_temp <- temp_feb %>% map(
   ~almond_yield(precip_jan = dat$sum_precip_jan, temp_feb = .x))
+```
 
+```{r}
+sensitivty_dat <- as.data.frame(do.call(rbind, 
+                                        lapply(almond_yield_temp, as.vector)))
 
+sensitivty_dat <- sensitivty_dat %>% mutate(year = dat$year)
 ```
