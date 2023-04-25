@@ -79,8 +79,12 @@ almond_yield_temp <- temp_feb %>% map(
 ```
 
 ```{r}
-sensitivty_dat <- as.data.frame(do.call(rbind, 
-                                        lapply(almond_yield_temp, as.vector)))
+# create data frames by concatenating list as rows
+sensitivty_dat <- as.data.frame(do.call(rbind, lapply(almond_yield_temp, as.vector)))
 
-sensitivty_dat <- sensitivty_dat %>% mutate(year = dat$year)
+# set column names as year
+colnames(sensitivty_dat) <- as.character(dat$year)
+
+# add temp_feb samples as column
+sensitivty_dat <- sensitivty_dat %>% mutate(temp = temp_feb)
 ```
