@@ -6,6 +6,8 @@ date: "`r Sys.Date()`"
 
 ```{r setup, include = FALSE}
 library(tidyverse)
+library(purrr)
+library(ggpubr)
 source("src/almond-yield.R", local = knitr::knit_global())
 ```
 
@@ -63,4 +65,17 @@ almond_yield(temp_feb = dat$mean_tmin_feb, precip_jan = dat$sum_precip_jan)
 
 ```{r}
 almond_yield(temp_feb = dat$min_tmin_feb, precip_jan = dat$sum_precip_jan)
+```
+
+## Sensitivity Analysis
+
+```{r}
+# create 20 samples of temperature in February
+temp_feb <- rnorm(mean = mean(dat$mean_tmin_feb), sd = 0.1, n = 20)
+
+# use map() to apply function to the 20 samples 
+almond_yield_temp <- temp_feb %>% map(
+  ~almond_yield(precip_jan = dat$sum_precip_jan, temp_feb = .x))
+
+
 ```
