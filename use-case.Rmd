@@ -102,12 +102,18 @@ sensitivty_dat <- as.data.frame(do.call(rbind, lapply(almond_yield_temp, as.vect
 # set column names as year
 colnames(sensitivty_dat) <- as.character(dat$year)
 
-# add temp_feb samples as column
-sensitivty_dat <- sensitivty_dat %>% mutate(temp = temp_feb)
-
-# move temp_feb samples column 
+# start data wrangling
+sensitivty_dat <- sensitivty_dat %>% 
+  # add temp_feb samples as column
+  mutate(temp = temp_feb) %>%
+  # relocate temp_feb column 
+  relocate(temp, .before = `1989`)
 
 # pivot longer data frame
+sensitivty_dat_longer <- sensitivty_dat %>%
+  pivot_longer(cols = !temp, 
+               names_to = "year", 
+               values_to = "yield_anom")
 ```
 
 ```{r}
