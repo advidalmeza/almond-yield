@@ -63,11 +63,28 @@ And let's apply the function:
 almond_yield(temp_feb = dat$mean_tmin_feb, precip_jan = dat$sum_precip_jan)
 ```
 
+```{r include = FALSE}
+yield_anom <- almond_yield(temp_feb = dat$mean_tmin_feb, precip_jan = dat$sum_precip_jan)
+```
+
+Let's extract the minimum, mean, and maximum value of the list:
+
 ```{r}
-almond_yield(temp_feb = dat$min_tmin_feb, precip_jan = dat$sum_precip_jan)
+# extract minimum yield anomaly value
+min(yield_anom)
+
+# extract mean yield anomaly value
+mean(yield_anom)
+
+# extract maximum yield anomaly value
+max(yield_anom)
 ```
 
 ## Sensitivity Analysis
+
+Next, let's do some informal sensitivity analysis of our two parameters.
+
+### Temperature Parameter
 
 ```{r}
 # create 20 samples of temperature in February
@@ -87,4 +104,56 @@ colnames(sensitivty_dat) <- as.character(dat$year)
 
 # add temp_feb samples as column
 sensitivty_dat <- sensitivty_dat %>% mutate(temp = temp_feb)
+
+# move temp_feb samples column 
+
+# pivot longer data frame
 ```
+
+```{r}
+# plot sensitivity of parameter
+```
+
+### Precipitation Parameter
+
+```{r}
+# create 20 samples of mean total precipitation in January
+precip_jan <- rnorm(mean = mean(dat$sum_precip_jan), sd = 0.1, n = 20)
+
+# use map() to apply function to the 20 samples 
+```
+
+```{r}
+# create data frames by concatenating list as rows
+
+# set column names as year
+
+# add precip_jan samples as column
+
+# move precip_jan samples column 
+
+# pivot longer data frame
+```
+
+```{r}
+# plot sensitivity of parameter
+```
+
+### Almond Yield Model Uncertainty
+
+Combine uncertainty
+
+```{r}
+
+```
+
+## Profit Model 
+
+Let's now develop a profit model alongside our simple almond yield model.
+
+\* you might assume a baseline profit and then adjust according to the anomaly  
+
+\* there are many ways to combine the almond yield and profit
+functions; you can have the profit function "call"/use the almond yield
+function; or create a wrapper function that calls them in sequence
+(first the almond yield and then the profit function) 
