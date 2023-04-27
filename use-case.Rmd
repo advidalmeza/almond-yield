@@ -88,7 +88,7 @@ Next, let's do some informal sensitivity analysis of our two parameters.
 
 ```{r}
 # create 20 samples of temperature in February
-temp_feb <- rnorm(mean = mean(dat$mean_tmin_feb), sd = 0.1, n = 20)
+temp_feb <- rnorm(mean = mean(dat$mean_tmin_feb), sd = 0.3, n = 20)
 
 # use map() to apply function to the 20 samples 
 almond_yield_temp <- temp_feb %>% map(
@@ -106,18 +106,23 @@ colnames(sensitivty_dat) <- as.character(dat$year)
 sensitivty_dat <- sensitivty_dat %>% 
   # add temp_feb samples as column
   mutate(temp = temp_feb) %>%
-  # relocate temp_feb column 
+  # relocate temp column before year columns
   relocate(temp, .before = `1989`)
 
 # pivot longer data frame
 sensitivty_dat_longer <- sensitivty_dat %>%
-  pivot_longer(cols = !temp, 
-               names_to = "year", 
-               values_to = "yield_anom")
+  pivot_longer(cols = !temp, # select all columns except temp
+               names_to = "year", # pivot column names to year column
+               values_to = "yield_anom") %>% # pivot rows to yield_anom column
+  filter(year %in% c(2001, 2002))
 ```
 
 ```{r}
 # plot sensitivity of parameter
+ggplot(sensitivty_dat_longer, aes(year, yield_anom, group = year)) + 
+  geom_boxplot() + 
+  labs(y = "Almond Yield Anomalies in ton per acre")
+
 ```
 
 ### Precipitation Parameter
