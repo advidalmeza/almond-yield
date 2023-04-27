@@ -159,7 +159,7 @@ sensitivty_dat_precip <- sensitivty_dat_precip %>%
 sensitivty_dat_precip_longer <- sensitivty_dat_precip %>% 
   pivot_longer(cols = !precip,
                names_to = "year",
-               values_to = "yield_anom")
+               values_to = "yield_anom_precip")
 ```
 
 ```{r}

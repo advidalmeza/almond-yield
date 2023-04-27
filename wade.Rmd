@@ -33,5 +33,12 @@ for (j in 1:length(almond_yield_temp)) {
 ```
 
 
+```{r}
+precip <- sensitivty_dat_precip_longer$precip
+temp <- sensitivty_dat_longer$temp
+params <- cbind.data.frame(precip, temp)
+
+results = parms %>% pmap(almond_yield, temp_feb = temp,  precip_jan = precip)
+```
 
 
