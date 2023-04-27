@@ -1,0 +1,37 @@
+
+```{r}
+
+eff = rnorm(mean=0.5, sd = 0.1, n=20)
+sa <- eff %>% map(~almond_yield(temp_feb = 18.989, precip_jan = 4.789))
+
+sa <- as.data.frame(sa)
+
+tmp = map_df(sa,`[`, c("annual"))
+
+head(tmp)
+
+site2df = data.frame(year = tmp$annual$year, elect= tmp$annual$elect)
+
+
+
+```
+
+```{r}
+
+first_parts <- list()
+# Extract the first part of each sublist for each part of the general list
+first_parts <- list()
+for (j in 1:length(almond_yield_temp)) {
+  sublist <- almond_yield_temp[[j]]
+  first_part_sublist <- list()
+  for (i in 1:20) {
+    first_part_sublist[[i]] <- sublist[[i]][1]
+  }
+  first_parts[[j]] <- first_part_sublist
+}
+
+```
+
+
+
+
