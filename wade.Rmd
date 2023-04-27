@@ -41,4 +41,21 @@ params <- cbind.data.frame(precip, temp)
 results = parms %>% pmap(almond_yield, temp_feb = temp,  precip_jan = precip)
 ```
 
+```{r}
+nsamples = 300
+deviation = 0.15
+base_temp = 20
+temp = rnorm(mean=base_temp, sd = deviation*base_temp, n=nsamples)
+
+base_precip = 100
+precip = rnorm(mean=base_precip, sd = deviation*base_precip, n=nsamples)
+
+params = data.frame(temp, precip)
+
+results = params %>% pmap(almond_yield)
+
+mean_yield = map_df(as.data.frame(results), `[`, c("mean_yield"))
+
+mean_yield = cbind.data.frame(mean_yield, parms)
+```
 
