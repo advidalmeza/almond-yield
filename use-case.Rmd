@@ -13,7 +13,7 @@ source("src/almond-yield.R", local = knitr::knit_global())
 
 ## Conceptual Modeling
 
-![](almond_yield.jpg)
+![](src/almond_yield_2.png){width="534"}
 
 ## Application
 
@@ -64,57 +64,79 @@ almond_yield(temp_feb = dat$mean_tmin_feb, precip_jan = dat$sum_precip_jan)
 ```
 
 ```{r include = FALSE}
-yield_anom <- almond_yield(temp_feb = dat$mean_tmin_feb, precip_jan = dat$sum_precip_jan)
+almond_yield_results <- almond_yield(temp_feb = dat$mean_tmin_feb, 
+                             precip_jan = dat$sum_precip_jan)
 ```
 
 Let's extract the minimum, mean, and maximum value of the list:
 
 ```{r}
 # extract minimum yield anomaly value
-min(yield_anom)
+min(almond_yield_results)
 
 # extract mean yield anomaly value
-mean(yield_anom)
+mean(almond_yield_results)
 
 # extract maximum yield anomaly value
-max(yield_anom)
+max(almond_yield_results)
 ```
+
+## Profit Model
+
+Let's now develop a profit model alongside our simple almond yield model.
+
+\* you might assume a baseline profit and then adjust according to the anomaly  
+
+\* there are many ways to combine the almond yield and profit functions; you can have the profit function "call"/use the almond yield function; or create a wrapper function that calls them in sequence (first the almond yield and then the profit function) 
 
 ## Sensitivity Analysis
 
-Next, let's do some informal sensitivity analysis of our two parameters.
-
-### Temperature Parameter
+Next, let's do some informal sensitivity analysis on our parameters.
 
 ```{r}
-# create 20 samples of temperature in February
-temp_feb <- rnorm(mean = mean(dat$mean_tmin_feb), sd = 0.3, n = 20)
+# define param_1 from almond_yield function
+param_1 <- as.numeric(-0.015)
+# define param_3 from almond_yield function
+param_3 <- as.numeric(-0.07)
+```
 
-# use map() to apply function to the 20 samples 
-almond_yield_temp <- temp_feb %>% map(
-  ~almond_yield(precip_jan = dat$sum_precip_jan, temp_feb = .x))
+### Parameter 1
+
+```{r}
+# create 300 samples of param_1
+param_1_samples <- rnorm(mean = param_1, sd = 0.15, n = 300)
+# deviation <- 0.4
+
+# param_1_samples <- runif(min = param_1-deviation*param_1, 
+                         # max = param_1+deviation*param_1,
+                         # n = 300)
+
+# use map() to apply function to the 300 samples 
+almond_yield_param_1 <- param_1_samples %>% map(
+  ~almond_yield(precip_jan = dat$sum_precip_jan, 
+                temp_feb = dat$mean_tmin_feb, param_1 = .x))
 ```
 
 ```{r}
 # create data frames by concatenating list as rows
-sensitivty_dat <- as.data.frame(do.call(rbind, lapply(almond_yield_temp, as.vector)))
+sensitivty_dat <- as.data.frame(do.call(rbind, 
+                                        lapply(almond_yield_param_1, as.vector)))
 
 # set column names as year
 colnames(sensitivty_dat) <- as.character(dat$year)
 
 # start data wrangling
 sensitivty_dat <- sensitivty_dat %>% 
-  # add temp_feb samples as column
-  mutate(temp = temp_feb) %>%
-  # relocate temp column before year columns
-  relocate(temp, .before = `1989`)
+  # add param_1 samples as column
+  mutate(param_1 = param_1_samples) %>%
+  # relocate param_1 column before year columns
+  relocate(param_1, .before = `1989`)
 
 # pivot longer data frame
 sensitivty_dat_longer <- sensitivty_dat %>%
-  pivot_longer(cols = !temp, # select all columns except temp
+  pivot_longer(cols = !param_1, # select all columns except param_1
                names_to = "year", # pivot column names to year column
-               values_to = "yield_anom") %>% # pivot rows to yield_anom column
-  filter(year %in% c(2001, 2002))
+               values_to = "yield_anom") # pivot rows to yield_anom column
 ```
 
 ```{r}
@@ -172,16 +194,8 @@ ggplot(sensitivty_dat_precip_longer, aes(year, yield_anom, group = year)) +
 
 ### Almond Yield Model Uncertainty
 
-Combine uncertainty
+Now, we combine uncertainty of parameters.
 
 ```{r}
 
 ```
-
-## Profit Model
-
-Let's now develop a profit model alongside our simple almond yield model.
-
-\* you might assume a baseline profit and then adjust according to the anomaly  
-
-\* there are many ways to combine the almond yield and profit functions; you can have the profit function "call"/use the almond yield function; or create a wrapper function that calls them in sequence (first the almond yield and then the profit function) 
