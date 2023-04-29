@@ -144,49 +144,48 @@ sensitivty_dat_longer <- sensitivty_dat %>%
 ggplot(sensitivty_dat_longer, aes(year, yield_anom, group = year)) + 
   geom_boxplot() + 
   labs(y = "Almond Yield Anomalies in ton per acre")
-
 ```
 
 ### Precipitation Parameter
 
 ```{r}
 # create 20 samples of mean total precipitation in January
-precip_jan <- rnorm(mean = mean(dat$sum_precip_jan), sd = 0.1, n = 20)
+param_3_samples <- rnorm(param_3, sd = 0.15, n = 300)
+
+almond_yield_param_3 <- param_3_samples %>% map(
+  ~almond_yield(temp_feb = dat$mean_tmin_feb, 
+                precip_jan = dat$sum_precip_jan, param_3 = .x))
+
+
 
 # use map() to apply function to the 20 samples 
 ```
 
 ```{r}
-# create 20 samples of mean total precipitation in January
-precip_jan <- rnorm(mean = mean(dat$sum_precip_jan), sd = 0.1, n = 20)
-
-# use map() to apply function to the 20 samples 
-almond_yield_precip <- precip_jan %>% map(
-  ~almond_yield(temp_feb = dat$mean_tmin_feb, precip_jan = .x))
-
 # create data frames by concatenating list as rows
-sensitivty_dat_precip <- as.data.frame(do.call(rbind, lapply(almond_yield_precip, as.vector)))
+sensitivty_dat_param_3 <- as.data.frame(do.call(rbind, lapply(almond_yield_param_3, as.vector)))
+
 
 # set column names as year
-colnames(sensitivty_dat_precip) <- as.character(dat$year)
+colnames(sensitivty_dat_param_3) <- as.character(dat$year)
 
 # data wrangling
-sensitivty_dat_precip <- sensitivty_dat_precip %>% 
-  # add precip_jan samples as column
-  mutate(precip = precip_jan) %>%
-  # relocate precip column 
-  relocate(precip, .before = `1989`)
+sensitivty_dat_param_3 <- sensitivty_dat_param_3 %>% 
+  # add param_3 samples
+  mutate(param_3 = param_3_samples) %>%
+  # relocate param_3 column 
+  relocate(param_3, .before = `1989`)
 
-# pivot longer data frame
-sensitivty_dat_precip_longer <- sensitivty_dat_precip %>% 
-  pivot_longer(cols = !precip,
+# pivot longer
+sensitivty_dat_param_3_longer <- sensitivty_dat_param_3 %>% 
+  pivot_longer(cols = !param_3,
                names_to = "year",
-               values_to = "yield_anom_precip")
+               values_to = "yield_anom_param_3")
 ```
 
 ```{r}
-# plot sensitivity of precip parameter
-ggplot(sensitivty_dat_precip_longer, aes(year, yield_anom, group = year)) + 
+# plot sensitivity of param 3
+ggplot(sensitivty_dat_param_3_longer, aes(year, yield_anom_param_3, group = year)) + 
   geom_boxplot() + 
   labs(y = "Almond Yield Anomalies in ton per acre",
        title = "Almond Yield Anomalies based on January Precipitation\n")

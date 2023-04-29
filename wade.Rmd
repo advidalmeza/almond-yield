@@ -59,3 +59,23 @@ mean_yield = map_df(as.data.frame(results), `[`, c("mean_yield"))
 mean_yield = cbind.data.frame(mean_yield, parms)
 ```
 
+
+# plotting Almond Yield anomolies as a function of temperature
+```{r}
+# plot sensitivity of parameter
+ggplot(sensitivty_dat_longer, aes(year, yield_anom, group = year)) + 
+  geom_boxplot() + 
+  labs(y = "Almond Yield Anomalies in ton per acre") +
+  ylim(0, 50)
+
+```
+
+
+
+
+
+
+
+
+
+
