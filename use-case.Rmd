@@ -213,6 +213,8 @@ ggplot(sensitivty_dat_longer, aes(year, yield_anom, group = year)) +
   labs(y = "Almond Yield Anomalies in ton per acre") +
   geom_boxplot(data = sensitivty_dat_param_3_longer, aes(year, yield_anom_param_3, group = year), fill = "blue", alpha = 0.5) +
   ylim(0, 20)
+
+# There was just one year, 1991, when parameter 1 (vs parameter 3) caused more of an increase in production of almonds
 ```
 
 ### Almond Yield Model Uncertainty
