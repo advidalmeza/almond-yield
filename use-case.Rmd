@@ -146,7 +146,7 @@ ggplot(sensitivty_dat_longer, aes(year, yield_anom, group = year)) +
   labs(y = "Almond Yield Anomalies in ton per acre")
 ```
 
-### Precipitation Parameter
+### Parameter 3
 
 ```{r}
 # create 20 samples of mean total precipitation in January
@@ -188,7 +188,31 @@ sensitivty_dat_param_3_longer <- sensitivty_dat_param_3 %>%
 ggplot(sensitivty_dat_param_3_longer, aes(year, yield_anom_param_3, group = year)) + 
   geom_boxplot() + 
   labs(y = "Almond Yield Anomalies in ton per acre",
-       title = "Almond Yield Anomalies based on January Precipitation\n")
+       title = "Almond Yield Anomalies")
+
+
+# plotting both param 1 and param 3
+a=ggplot(sensitivty_dat_longer, aes(year, yield_anom, group = year)) + 
+  geom_boxplot() + 
+  labs(y = "Almond Yield Anomalies in ton per acre")
+b=ggplot(sensitivty_dat_param_3_longer, aes(year, yield_anom_param_3, group = year)) + 
+  geom_boxplot() + 
+  labs(y = "Almond Yield Anomalies in ton per acre")
+ggarrange(a,b)
+
+# put on one graph
+ggplot(sensitivty_dat_longer, aes(year, yield_anom, group = year)) + 
+  geom_boxplot(fill = "red") + 
+  labs(y = "Almond Yield Anomalies in ton per acre") +
+  geom_boxplot(data = sensitivty_dat_param_3_longer, aes(year, yield_anom_param_3, group = year), fill = "blue")
+# 5 years that are outliers?
+
+# to display variance in parameter 1 and overlap with parameter 3
+ggplot(sensitivty_dat_longer, aes(year, yield_anom, group = year)) + 
+  geom_boxplot(fill = "red") + 
+  labs(y = "Almond Yield Anomalies in ton per acre") +
+  geom_boxplot(data = sensitivty_dat_param_3_longer, aes(year, yield_anom_param_3, group = year), fill = "blue", alpha = 0.5) +
+  ylim(0, 20)
 ```
 
 ### Almond Yield Model Uncertainty
