@@ -105,11 +105,6 @@ param_3 <- as.numeric(-0.07)
 ```{r}
 # create 300 samples of param_1
 param_1_samples <- rnorm(mean = param_1, sd = 0.15, n = 300)
-# deviation <- 0.4
-
-# param_1_samples <- runif(min = param_1-deviation*param_1, 
-                         # max = param_1+deviation*param_1,
-                         # n = 300)
 
 # use map() to apply function to the 300 samples 
 almond_yield_param_1 <- param_1_samples %>% map(
@@ -119,21 +114,21 @@ almond_yield_param_1 <- param_1_samples %>% map(
 
 ```{r}
 # create data frames by concatenating list as rows
-sensitivty_dat <- as.data.frame(do.call(rbind, 
+sensitivty_dat_param_2 <- as.data.frame(do.call(rbind, 
                                         lapply(almond_yield_param_1, as.vector)))
 
 # set column names as year
-colnames(sensitivty_dat) <- as.character(dat$year)
+colnames(sensitivty_dat_param_2) <- as.character(dat$year)
 
 # start data wrangling
-sensitivty_dat <- sensitivty_dat %>% 
+sensitivty_dat_param_2 <- sensitivty_dat_param_2 %>% 
   # add param_1 samples as column
   mutate(param_1 = param_1_samples) %>%
   # relocate param_1 column before year columns
   relocate(param_1, .before = `1989`)
 
 # pivot longer data frame
-sensitivty_dat_longer <- sensitivty_dat %>%
+sensitivty_dat_param_2 <- sensitivty_dat_param_2 %>%
   pivot_longer(cols = !param_1, # select all columns except param_1
                names_to = "year", # pivot column names to year column
                values_to = "yield_anom") # pivot rows to yield_anom column
@@ -141,7 +136,7 @@ sensitivty_dat_longer <- sensitivty_dat %>%
 
 ```{r}
 # plot sensitivity of parameter
-ggplot(sensitivty_dat_longer, aes(year, yield_anom, group = year)) + 
+ggplot(sensitivty_dat_param_2, aes(year, yield_anom, group = year)) + 
   geom_boxplot() + 
   labs(y = "Almond Yield Anomalies in ton per acre")
 ```
@@ -149,22 +144,19 @@ ggplot(sensitivty_dat_longer, aes(year, yield_anom, group = year)) +
 ### Parameter 3
 
 ```{r}
-# create 20 samples of mean total precipitation in January
+# create 300 samples of mean total precipitation in January
 param_3_samples <- rnorm(param_3, sd = 0.15, n = 300)
 
+# use map() to apply function to the 300 samples 
 almond_yield_param_3 <- param_3_samples %>% map(
   ~almond_yield(temp_feb = dat$mean_tmin_feb, 
                 precip_jan = dat$sum_precip_jan, param_3 = .x))
-
-
-
-# use map() to apply function to the 20 samples 
 ```
 
 ```{r}
 # create data frames by concatenating list as rows
-sensitivty_dat_param_3 <- as.data.frame(do.call(rbind, lapply(almond_yield_param_3, as.vector)))
-
+sensitivty_dat_param_3 <- as.data.frame(do.call(rbind,
+                                        lapply(almond_yield_param_3, as.vector)))
 
 # set column names as year
 colnames(sensitivty_dat_param_3) <- as.character(dat$year)
