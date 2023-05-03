@@ -1,8 +1,6 @@
 ---
 title: "Use Case of Almond Yield"
-output:
-  pdf_document: default
-  html_document: default
+output: html_document
 date: "`r Sys.Date()`"
 ---
 
@@ -198,14 +196,14 @@ b=ggplot(sensitivty_dat_param_3_longer, aes(year, yield_anom_param_3, group = ye
 ggarrange(a,b)
 
 # put on one graph
-ggplot(sensitivty_dat_param_3, aes(year, yield_anom_param_3, group = year)) + 
+ggplot(sensitivty_dat_param_3, aes(year, yield_anom, group = year)) + 
   geom_boxplot(fill = "red") + 
   labs(y = "Almond Yield Anomalies in ton per acre") +
   geom_boxplot(data = sensitivty_dat_param_3_longer, aes(year, yield_anom_param_3, group = year), fill = "blue")
 # 5 years that are outliers?
 
 # to display variance in parameter 1 and overlap with parameter 3
-ggplot(sensitivty_dat_param_3, aes(year, yield_anom_param_3, group = year)) + 
+ggplot(sensitivty_dat_param_3, aes(year, yield_anom, group = year)) + 
   geom_boxplot(fill = "red") + 
   labs(y = "Almond Yield Anomalies in ton per acre") +
   geom_boxplot(data = sensitivty_dat_param_3_longer, aes(year, yield_anom_param_3, group = year), fill = "blue", alpha = 0.5) +
