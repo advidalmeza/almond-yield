@@ -1,4 +1,4 @@
-#' Almond Yield 
+#' Compute Almond Yield Anomaly
 #'
 #' @param temp_feb Minimum temperature in February (in degree Celsius) 
 #' @param precip_jan Precipitation in January (in millimeter)
@@ -8,7 +8,6 @@
 #' @param param_4 Coefficient for precip_jan squared
 #'
 #' @return Almond yield anomaly (in ton per acre)
-#' @export
 #'
 #' @examples
 #' almond_yield(temp_feb = 10.7, precip_jan = 0.09)
