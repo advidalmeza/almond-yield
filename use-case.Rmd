@@ -221,3 +221,9 @@ Now, we combine uncertainty of parameters.
 ```{r}
 
 ```
+
+### Profit Model
+
+```{r}
+compute_profit(anom_almond_yield_results = almond_yield_results, years = dat$year)
+```
